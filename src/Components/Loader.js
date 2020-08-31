@@ -7,7 +7,7 @@ const Animation = keyframes`
         opacity:0
     }
     50% {
-        opacity:1
+        opacity:0.3
     }
     100% {
         opacity:0

@@ -21,6 +21,7 @@ const Header = styled.header`
   justify-content: center;
   align-items: center;
   padding: 25px 0px;
+  z-index: 2;
 `;
 
 const HeaderWrapper = styled.div`
@@ -28,6 +29,7 @@ const HeaderWrapper = styled.div`
   max-width: ${(props) => props.theme.maxWidth};
   display: flex;
   justify-content: center;
+  padding: 0px 30px;
 `;
 
 const HeaderColumn = styled.div`
@@ -50,7 +52,7 @@ const SearchInput = styled(Input)`
   border-radius: 3px;
   height: auto;
   text-align: center;
-  width: 70%;
+  min-width: 70%;
   &::placeholder {
     opacity: 0.8;
     font-weight: 200;

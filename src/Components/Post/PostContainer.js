@@ -7,17 +7,41 @@ import useInput from '../../Hooks/useInput';
 const PostContainer = ({
   id,
   user,
+  caption,
+  location,
   files,
   likeCount,
   isLiked,
   comments,
   createdAt,
 }) => {
-  return <PostPresenter />;
+  const [isLikedS, setIsLiked] = useState(isLiked);
+  const [likeCountS, setlikeCount] = useState(likeCount);
+  const comment = useInput('');
+  return (
+    <PostPresenter
+      user={user}
+      caption={caption}
+      location={location}
+      files={files}
+      likeCount={likeCountS}
+      isLiked={isLikedS}
+      comments={comments}
+      createdAt={createdAt}
+      newComment={comment}
+      setIsLiked={setIsLiked}
+      setlikeCount={setlikeCount}
+    />
+  );
 };
 
 PostContainer.propTypes = {
   id: PropTypes.string.isRequired,
+  createdAt: PropTypes.string.isRequired,
+  likeCount: PropTypes.number.isRequired,
+  isLiked: PropTypes.bool.isRequired,
+  caption: PropTypes.string.isRequired,
+  location: PropTypes.string.isRequired,
   user: PropTypes.shape({
     id: PropTypes.string.isRequired,
     avatar: PropTypes.string,
@@ -29,8 +53,6 @@ PostContainer.propTypes = {
       url: PropTypes.string.isRequired,
     })
   ).isRequired,
-  likeCount: PropTypes.number.isRequired,
-  isLiked: PropTypes.bool.isRequired,
   comments: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -41,6 +63,5 @@ PostContainer.propTypes = {
       }).isRequired,
     })
   ).isRequired,
-  createdAt: PropTypes.string,
 };
 export default PostContainer;

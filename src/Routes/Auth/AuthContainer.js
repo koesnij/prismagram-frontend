@@ -53,9 +53,9 @@ export default () => {
           } = await requestSecretMutation();
           if (requestSecret) {
             toast.success('Check your mailbox for your login secret!');
-            setTimeout(() => setAction('confirm'));
+            setAction('confirm');
           } else {
-            // toast.error("You don't have an account yet, create one!");
+            toast.error("Can't find the account, create one!");
           }
         } catch {
           toast.error("Can't request secret, try again.");

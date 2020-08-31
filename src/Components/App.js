@@ -36,13 +36,13 @@ export default () => {
           <>
             <GlobalStyles />
             <Wrapper>
-              <Header />
+              {isLoggedIn && <Header />}
               <Routes isLoggedIn={isLoggedIn} />
               <Footer />
             </Wrapper>
           </>
         </Router>
-        <ToastContainer position={toast.POSITION.BOTTOM_LEFT} />
+        <ToastContainer position={toast.POSITION.TOP_CENTER} />
       </>
     </ThemeProvider>
   );
