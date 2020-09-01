@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import TextareaAutosize from 'react-autosize-textarea';
 
 import FatText from '../FatText';
 import Avatar from '../Avatar';
@@ -29,17 +30,30 @@ const Location = styled.span`
   font-size: 12px;
 `;
 
-const Files = styled.div``;
+const Files = styled.div`
+  position: relative;
+  padding-bottom: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stratch;
+  flex-shrink: 0;
+`;
 
-const File = styled.img`
+const File = styled.div`
+  max-width: 100%;
   width: 100%;
-  height: auto;
-  cursor: pointer;
+  height: 600px;
+  position: absolute;
+  top: 0;
+  background-image: url(${(props) => props.src});
+  background-size: cover;
+  background-position: center;
+  opacity: ${(props) => (props.showing ? 1 : 0)};
+  transition: opacity 0.5s linear;
 `;
 
 const Meta = styled.div`
   padding: 15px;
-  margin-bottom: 10px;
   border-bottom: ${(props) => props.theme.boxBorder};
 `;
 const Buttons = styled.div`
@@ -61,6 +75,18 @@ const Timestamp = styled.span`
   color: ${(props) => props.theme.greyColor};
 `;
 
+//괄호 안에 있는 component가 prob called classname을 갖고 있으면 원하는 대로 추가할 수 있다?
+const Textarea = styled(TextareaAutosize)`
+  border: none;
+  width: 100%;
+  resize: none;
+  font-size: 14px;
+  &:focus {
+    outline: none;
+  }
+  padding: 15px;
+`;
+
 export default ({
   user: { username, avatar },
   caption,
@@ -69,7 +95,9 @@ export default ({
   likeCount,
   isLiked,
   comments,
+  newComment,
   createdAt,
+  currentItem,
 }) => {
   return (
     <Post>
@@ -81,7 +109,14 @@ export default ({
         </UserColumn>
       </Header>
       <Files>
-        {files && files.map((file) => <File key={file.id} src={file.url} />)}
+        {files &&
+          files.map((file, index) => (
+            <File
+              key={file.id}
+              src={file.url}
+              showing={index === currentItem}
+            />
+          ))}
       </Files>
       <Meta>
         <Buttons>
@@ -93,6 +128,8 @@ export default ({
         <FatText text={likeCount === 1 ? '1 like' : `${likeCount} likes`} />
         <Timestamp>2 DAYS AGO</Timestamp>
       </Meta>
+      <Textarea placeholder={'Add a comment...'} {...newComment} />{' '}
+      {/* props으로 부터 옴 */}
     </Post>
   );
 };
