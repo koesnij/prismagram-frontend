@@ -4,21 +4,21 @@ import TextareaAutosize from 'react-autosize-textarea';
 
 import FatText from '../FatText';
 import Avatar from '../Avatar';
-import { HeartFull, HeartEmpty, Comment } from '../Icons';
+import { HeartFull, HeartEmpty, Comment as CommentIcon } from '../Icons';
 
 const Post = styled.div`
   ${(props) => props.theme.whiteBox};
   background-color: white;
   width: 100%;
   max-width: 600px;
-  margin-bottom: 25px;
   user-select: none;
+  margin-bottom: 25px;
 `;
 
 const Header = styled.header`
   padding: 15px;
   display: flex;
-  align-items: 'center';
+  align-items: center;
 `;
 
 const UserColumn = styled.div`
@@ -36,7 +36,7 @@ const Files = styled.div`
   padding-bottom: 100%;
   display: flex;
   flex-direction: column;
-  align-items: stratch;
+  align-items: stretch;
   flex-shrink: 0;
 `;
 
@@ -53,17 +53,21 @@ const File = styled.div`
   transition: opacity 0.5s linear;
 `;
 
-const Meta = styled.div`
-  padding: 15px;
-  border-bottom: ${(props) => props.theme.boxBorder};
-`;
-const Buttons = styled.div`
-  margin-bottom: 10px;
-`;
-
 const Button = styled.span`
   cursor: pointer;
-  margin-right: 10px;
+`;
+
+const Meta = styled.div`
+  padding: 15px;
+`;
+
+const Buttons = styled.div`
+  ${Button} {
+    &:first-child {
+      margin-right: 10px;
+    }
+  }
+  margin-bottom: 10px;
 `;
 
 const Timestamp = styled.span`
@@ -71,9 +75,10 @@ const Timestamp = styled.span`
   text-transform: uppercase;
   opacity: 0.5;
   display: block;
-  margin-top: 10px;
-  font-size: 11px;
-  color: ${(props) => props.theme.greyColor};
+  font-size: 12px;
+  margin: 10px 0px;
+  padding-bottom: 10px;
+  border-bottom: ${(props) => props.theme.lightGreyColor} 1px solid;
 `;
 
 //괄호 안에 있는 component가 prob called classname을 갖고 있으면 원하는 대로 추가할 수 있다?
@@ -85,7 +90,17 @@ const Textarea = styled(TextareaAutosize)`
   &:focus {
     outline: none;
   }
-  padding: 15px;
+`;
+
+const Comments = styled.ul`
+  margin-top: 10px;
+`;
+
+const Comment = styled.li`
+  margin-bottom: 7px;
+  span {
+    margin-right: 5px;
+  }
 `;
 
 export default ({
@@ -100,40 +115,50 @@ export default ({
   createdAt,
   currentItem,
   toggleLike,
-}) => {
-  return (
-    <Post>
-      <Header>
-        <Avatar size="sm" url={avatar} />
-        <UserColumn>
-          <FatText text={username} />
-          <Location>{location}</Location>
-        </UserColumn>
-      </Header>
-      <Files>
-        {files &&
-          files.map((file, index) => (
-            <File
-              key={file.id}
-              src={file.url}
-              showing={index === currentItem}
-            />
+  onKeyPress,
+}) => (
+  <Post>
+    <Header>
+      <Avatar size="sm" url={avatar} />
+      <UserColumn>
+        <FatText text={username} />
+        <Location>{location}</Location>
+      </UserColumn>
+    </Header>
+    <Files>
+      {files &&
+        files.map((file, index) => (
+          <File key={file.id} src={file.url} showing={index === currentItem} />
+        ))}
+    </Files>
+    <Meta>
+      <Buttons>
+        <Button onClick={toggleLike}>
+          {isLiked ? <HeartFull /> : <HeartEmpty />}
+        </Button>
+        <Button>
+          <CommentIcon />
+        </Button>
+      </Buttons>
+      <FatText text={likeCount === 1 ? '1 like' : `${likeCount} likes`} />
+      {comments && (
+        <Comments>
+          {comments.map((comment) => (
+            <Comment key={comment.id}>
+              <FatText text={comment.user.username} />
+              {comment.text}
+            </Comment>
           ))}
-      </Files>
-      <Meta>
-        <Buttons>
-          <Button onClick={toggleLike}>
-            {isLiked ? <HeartFull /> : <HeartEmpty />}
-          </Button>
-          <Button>
-            <Comment />
-          </Button>
-        </Buttons>
-        <FatText text={likeCount === 1 ? '1 like' : `${likeCount} likes`} />
-        <Timestamp>2 DAYS AGO</Timestamp>
-      </Meta>
-      <Textarea placeholder={'Add a comment...'} {...newComment} />{' '}
+        </Comments>
+      )}
+      <Timestamp>2 DAYS AGO</Timestamp>
+      <Textarea
+        placeholder={'Add a comment...'}
+        value={newComment.value}
+        onChange={newComment.onChange}
+        onKeyUp={onKeyPress}
+      />
       {/* props으로 부터 옴 */}
-    </Post>
-  );
-};
+    </Meta>
+  </Post>
+);
