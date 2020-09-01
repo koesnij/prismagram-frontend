@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/react-hooks';
+import { toast } from 'react-toastify';
 import PropTypes from 'prop-types';
 
 import PostPresenter from './PostPresenter';
@@ -17,9 +18,10 @@ const PostContainer = ({
   comments,
   createdAt,
 }) => {
-  const [isLikedS, setIsLiked] = useState(isLiked);
-  const [likeCountS, setlikeCount] = useState(likeCount);
+  const [isLikedFromState, setIsLiked] = useState(isLiked);
+  const [likeCountFromState, setLikeCount] = useState(likeCount);
   const [currentItem, setCurrentItem] = useState(0);
+  const [commentsFromState, setComment] = useState([...comments]);
 
   const comment = useInput('');
 
@@ -45,36 +47,44 @@ const PostContainer = ({
   const toggleLike = () => {
     // await을 쓰면 실시간 상호작용을 보여줄 수 없음 (반응이 늦음)
     toggleLikeMutation();
-    if (isLikedS === true) {
-      setIsLiked(false);
-      setlikeCount(likeCountS - 1);
+    if (isLikedFromState === true) {
+      likeCountFromState(false);
+      setLikeCount(likeCountFromState - 1);
     } else {
       setIsLiked(true);
-      setlikeCount(likeCountS + 1);
+      setLikeCount(likeCountFromState + 1);
     }
   };
 
-  const onKeyPress = (e) => {
-    const { keyCode } = e;
-    if (keyCode === 13) {
-      comment.setValue('');
-      addCommentMutation();
+  const onKeyPress = async (e) => {
+    const { which } = e;
+    if (which === 13) {
+      e.preventDefault();
+      try {
+        const {
+          data: { addComment },
+        } = await addCommentMutation();
+        setComment([...commentsFromState, addComment]);
+        comment.setValue('');
+      } catch (error) {
+        toast.error('Cannot send comment.');
+      }
     }
   };
 
   return (
     <PostPresenter
       user={user}
+      createdAt={createdAt}
       caption={caption}
       location={location}
       files={files}
-      likeCount={likeCountS}
-      isLiked={isLikedS}
-      comments={comments}
-      createdAt={createdAt}
+      comments={commentsFromState}
       newComment={comment}
+      isLiked={isLikedFromState}
       setIsLiked={setIsLiked}
-      setlikeCount={setlikeCount}
+      likeCount={likeCountFromState}
+      setLikeCount={setLikeCount}
       currentItem={currentItem}
       toggleLike={toggleLike}
       onKeyPress={onKeyPress}

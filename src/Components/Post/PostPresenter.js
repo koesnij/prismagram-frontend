@@ -156,7 +156,7 @@ export default ({
         placeholder={'Add a comment...'}
         value={newComment.value}
         onChange={newComment.onChange}
-        onKeyUp={onKeyPress}
+        onKeyPress={onKeyPress}
       />
       {/* props으로 부터 옴 */}
     </Meta>
