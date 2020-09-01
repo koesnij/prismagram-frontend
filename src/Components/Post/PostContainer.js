@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation } from '@apollo/react-hooks';
 import PropTypes from 'prop-types';
 
 import PostPresenter from './PostPresenter';
 import useInput from '../../Hooks/useInput';
+import { TOGGLE_LIKE, ADD_COMMENT } from './PostQueries';
 
 const PostContainer = ({
   id,
@@ -18,7 +20,16 @@ const PostContainer = ({
   const [isLikedS, setIsLiked] = useState(isLiked);
   const [likeCountS, setlikeCount] = useState(likeCount);
   const [currentItem, setCurrentItem] = useState(0);
+
   const comment = useInput('');
+
+  const [toggleLikeMutation] = useMutation(TOGGLE_LIKE, {
+    variables: { postId: id },
+  });
+  const [addCommentMutation] = useMutation(ADD_COMMENT, {
+    variables: { postId: id, text: comment.value },
+  });
+
   const slide = () => {
     const totalFiles = files.length;
     if (currentItem === totalFiles - 1) {
@@ -30,7 +41,18 @@ const PostContainer = ({
   useEffect(() => {
     slide();
   }, [currentItem]);
-  console.log(currentItem);
+
+  const toggleLike = () => {
+    // await을 쓰면 실시간 상호작용을 보여줄 수 없음 (반응이 늦음)
+    toggleLikeMutation();
+    if (isLikedS === true) {
+      setIsLiked(false);
+      setlikeCount(likeCountS - 1);
+    } else {
+      setIsLiked(true);
+      setlikeCount(likeCountS + 1);
+    }
+  };
 
   return (
     <PostPresenter
@@ -46,6 +68,7 @@ const PostContainer = ({
       setIsLiked={setIsLiked}
       setlikeCount={setlikeCount}
       currentItem={currentItem}
+      toggleLike={toggleLike}
     />
   );
 };
