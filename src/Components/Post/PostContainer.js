@@ -28,7 +28,7 @@ const PostContainer = ({
   const [toggleLikeMutation] = useMutation(TOGGLE_LIKE, {
     variables: { postId: id },
   });
-  const [addCommentMutation] = useMutation(ADD_COMMENT, {
+  const [addCommentMutation, { data }] = useMutation(ADD_COMMENT, {
     variables: { postId: id, text: comment.value },
   });
 
@@ -48,7 +48,7 @@ const PostContainer = ({
     // await을 쓰면 실시간 상호작용을 보여줄 수 없음 (반응이 늦음)
     toggleLikeMutation();
     if (isLikedFromState === true) {
-      likeCountFromState(false);
+      setIsLiked(false);
       setLikeCount(likeCountFromState - 1);
     } else {
       setIsLiked(true);
@@ -64,6 +64,7 @@ const PostContainer = ({
         const {
           data: { addComment },
         } = await addCommentMutation();
+
         setComment([...commentsFromState, addComment]);
         comment.setValue('');
       } catch (error) {

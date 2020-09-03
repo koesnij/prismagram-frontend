@@ -15,7 +15,11 @@ const Container = styled.button`
   cursor: pointer;
 `;
 
-const Button = ({ text }) => <Container>{text}</Container>;
+const Button = ({ text, className, onClick }) => (
+  <Container className={className} onClick={onClick}>
+    {text}
+  </Container>
+);
 
 Button.propTypes = {
   text: PropTypes.string.isRequired,
